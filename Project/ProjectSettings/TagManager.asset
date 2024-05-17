@@ -8,6 +8,7 @@ TagManager:
   - Bouton
   - Porte2
   - Porte1
+  - MurPorte
   layers:
   - Default
   - TransparentFX

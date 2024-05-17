@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1715978735",
+        "python_version": "3.10.12 | packaged by Anaconda, Inc. | (main, Jul  5 2023, 19:01:18) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\0937786\\AppData\\Local\\miniconda3\\envs\\mlagents\\Scripts\\mlagents-learn --run-id randomLocationsDoors9",
+        "mlagents_version": "1.1.0.dev0",
+        "mlagents_envs_version": "1.1.0.dev0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1715978744"
+    },
+    "total": 9.088341499998933,
+    "count": 1,
+    "self": 0.004977399999916088,
+    "children": {
+        "run_training.setup": {
+            "total": 0.10206160000234377,
+            "count": 1,
+            "self": 0.10206160000234377
+        },
+        "TrainerController.start_learning": {
+            "total": 8.981302499996673,
+            "count": 1,
+            "self": 0.0003293999980087392,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 8.98095900000044,
+                    "count": 1,
+                    "self": 8.98095900000044
+                },
+                "trainer_threads": {
+                    "total": 8.999995770864189e-07,
+                    "count": 1,
+                    "self": 8.999995770864189e-07
+                },
+                "TrainerController._save_models": {
+                    "total": 1.3199998647905886e-05,
+                    "count": 1,
+                    "self": 1.3199998647905886e-05
+                }
+            }
+        }
+    }
+}
