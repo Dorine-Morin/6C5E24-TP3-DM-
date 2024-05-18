@@ -15,8 +15,6 @@ public class AgentController : Agent
     private bool interrupteurOff;
 
     [SerializeField] private List<GameObject> portes;
-    private Transform porte1Transform;
-    private Transform porte2Transform;
    
     private GameObject porteToReach;
     private Material porteToReachMat;
@@ -44,11 +42,11 @@ public class AgentController : Agent
     private float grandePortePosY = 0.9f;
     private float solMinX = -2f;
     private float solMaxX = 2f;
-    private float interrupteurminZ = -1f;
+    private float interrupteurminZ = -2f;
     private float interrupteurmaxZ = 1f;
     private float interrupteurPosY = 0.2f;
     private float agentMinZ = -2f;
-    private float agentMaxZ = -1f;
+    private float agentMaxZ = 1f;
     private float agentPosY = 0.5f;
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -121,8 +119,7 @@ public class AgentController : Agent
     private void BoutonReached()
     {
         if (interrupteurOff)
-        {
-            
+        {  
             AddReward(1000f);
             interrupteurMaterial.color = colorOff;
             SetPorteToReach();
@@ -177,7 +174,6 @@ public class AgentController : Agent
         portes[1].transform.localPosition = doorPositions[1];
     }
 
-
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         ActionSegment<float> contActions = actionsOut.ContinuousActions;
@@ -202,7 +198,6 @@ public class AgentController : Agent
         float position1X = Random.Range(murAvecPorteMinX, murAvecPorteMaxX);
         float position2X;
 
-        // Génération de la position x pour la deuxième position sans superposition avec la première
         do
         {
             position2X = Random.Range(murAvecPorteMinX, murAvecPorteMaxX);
