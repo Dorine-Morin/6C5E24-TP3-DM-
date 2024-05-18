@@ -5,10 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Mur
-  - Bouton
-  - Porte2
-  - Porte1
   - MurPorte
+  - PorteOuverte
+  - PorteFerme
+  - Interrupteur
   layers:
   - Default
   - TransparentFX

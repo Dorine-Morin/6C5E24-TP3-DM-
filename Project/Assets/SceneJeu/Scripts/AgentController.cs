@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class AgentController : Agent
 {
-
     [SerializeField] private GameObject sol;
     private Material solMaterial;
 
@@ -16,27 +15,41 @@ public class AgentController : Agent
     private bool interrupteurOff;
 
     [SerializeField] private List<GameObject> portes;
-
     private Transform porte1Transform;
-    private Material porte1Material;
-    private bool porte1Ouverte = false;
-
     private Transform porte2Transform;
-    private Material porte2Material;
-    private bool porte2Ouverte = false;
-
+   
     private GameObject porteToReach;
-    private Transform porteToReachTransform;
     private Material porteToReachMat;
     private int indexPorteToReach;
 
     private Transform goalTransform;
 
-    private Color materialOn = Color.yellow;
-    private Color materialOff = Color.black;
-    private Color materialGameOver = Color.red;
-    private Color materialGameSuccess = Color.green;
+    private Color colorOn = Color.yellow;
+    private Color colorOff = Color.black;
+    private Color colorMurSansPortes = Color.red;
+    private Color colorMurAvecPortes = Color.blue;
+    private Color colorPorteFerme = Color.magenta;
+    private Color colorPorteOuverte = Color.green;
 
+    private string porteOuverteTag = "PorteOuverte";
+    private string porteFermeTag = "PorteFerme";
+    private string interrupteurTag = "Interrupteur";
+    private string murSansPortesTag = "Mur";
+    private string murAvecPortesTag = "MurPorte";
+
+    private float murAvecPorteMinX = -2f;
+    private float murAvecPorteMaxX = 1.8f;
+    private float murAvecPortePosZ = 2.65f;
+    private float petitePortePosY = 0.5f;
+    private float grandePortePosY = 0.9f;
+    private float solMinX = -2f;
+    private float solMaxX = 2f;
+    private float interrupteurminZ = -1f;
+    private float interrupteurmaxZ = 1f;
+    private float interrupteurPosY = 0.2f;
+    private float agentMinZ = -2f;
+    private float agentMaxZ = -1f;
+    private float agentPosY = 0.5f;
 
     public override void OnActionReceived(ActionBuffers actions)
     {
@@ -49,51 +62,49 @@ public class AgentController : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.localPosition);
-        sensor.AddObservation(porteToReachTransform.localPosition);
+        sensor.AddObservation(goalTransform.localPosition);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((other.CompareTag("Porte1") && porte1Ouverte) || (other.CompareTag("Porte2") && porte2Ouverte))
+        if (other.CompareTag(porteOuverteTag))
         {
             GameSuccess();
         }
-        else if ((other.CompareTag("Porte1") && !porte1Ouverte) || (other.CompareTag("Porte2") && !porte2Ouverte))
+        else if (other.CompareTag(porteFermeTag))
         {
-            GameOver("PorteFerme");   
+            GameOver(porteFermeTag);   
         }
-        else if (other.CompareTag("Bouton"))
+        else if (other.CompareTag(interrupteurTag))
         {
             BoutonReached();
         }
-        else if (other.CompareTag("Mur"))
+        else if (other.CompareTag(murSansPortesTag))
         {
-            GameOver("Mur");
+            GameOver(murSansPortesTag);
         }
-        else if (other.CompareTag("MurPorte"))
+        else if (other.CompareTag(murAvecPortesTag))
         {
-            GameOver("MurPorte");
+            GameOver(murAvecPortesTag);
         }
     }
 
-
     private void GameOver(string collider)
     {
-        solMaterial.color = materialGameOver;
-
-        if (collider == "Mur")
+        if (collider == murSansPortesTag)
         {
             AddReward(-1000f);
+            solMaterial.color = colorMurSansPortes;
         }
-        else if (collider == "MurPorte")
+        else if (collider == murAvecPortesTag)
         {
             AddReward(-1000f);
-            solMaterial.color = Color.blue;
+            solMaterial.color = colorMurAvecPortes;
         }
-        else if (collider == "PorteFerme")
+        else if (collider == porteFermeTag)
         {
             AddReward(-100f);
-            solMaterial.color = Color.magenta;
+            solMaterial.color = colorPorteFerme;
         }
 
         EndEpisode();
@@ -101,7 +112,7 @@ public class AgentController : Agent
 
     private void GameSuccess()
     {
-        solMaterial.color = materialGameSuccess;
+        solMaterial.color = colorPorteOuverte;
 
         AddReward(100000f);
         EndEpisode();
@@ -109,75 +120,61 @@ public class AgentController : Agent
 
     private void BoutonReached()
     {
-        if (!interrupteurOff)
+        if (interrupteurOff)
         {
+            
             AddReward(1000f);
-            indexPorteToReach = Random.Range(0, portes.Count);
-            porteToReach = portes[indexPorteToReach];
-            porteToReachMat = porteToReach.GetComponent<MeshRenderer>().material;
-            porteToReachTransform = porteToReach.transform;
-
-            goalTransform = porteToReachTransform;
+            interrupteurMaterial.color = colorOff;
+            SetPorteToReach();
+            goalTransform = porteToReach.transform;
 
         } else
         {
+            interrupteurMaterial.color = colorOn;
+            porteToReach.gameObject.tag = porteFermeTag;
+            porteToReachMat.color = colorOff;
             goalTransform = interrupteurTransform;
         }
 
         interrupteurOff = !interrupteurOff;
-        interrupteurMaterial.color = interrupteurOff ? materialOff : materialOn;
-        porteToReachMat.color = interrupteurOff ? materialOn : materialOff;
-        
-
-        if (indexPorteToReach == 0)
-        {
-            porte1Ouverte = !porte1Ouverte;
-        }
-        else
-        {
-            porte2Ouverte = !porte2Ouverte;
-        }
     }
 
+    private void SetPorteToReach()
+    {
+        indexPorteToReach = Random.Range(0, portes.Count);
+        porteToReach = portes[indexPorteToReach];
+        porteToReachMat = porteToReach.GetComponent<MeshRenderer>().material;
+        porteToReach.gameObject.tag = porteOuverteTag;
+        porteToReachMat.color = colorOn;
+    }
 
     public override void OnEpisodeBegin()
     {
         // Initialisation de l'interrupteur
         interrupteurMaterial = interrupteur.GetComponent<MeshRenderer>().material;
         interrupteurTransform = interrupteur.transform;
-        interrupteurMaterial.color = materialOn;
-        interrupteurOff = false;
+        interrupteurMaterial.color = colorOn;
+        interrupteurOff = true;
         goalTransform = interrupteurTransform;
 
         // Initialisation des portes
-        porte1Material = portes[0].GetComponent<MeshRenderer>().material;
-        porte1Transform = portes[0].transform;
-        porte1Ouverte = false;
-
-        porte2Material = portes[1].GetComponent<MeshRenderer>().material;
-        porte2Transform = portes[1].transform;
-        porte2Ouverte = false;
-
-        // Choix aléatoire de la porte à atteindre
-        porteToReach = portes[0];
-        porteToReachMat = porteToReach.GetComponent<MeshRenderer>().material;
-        porteToReachTransform = porteToReach.transform;
+        foreach (var porte in portes)
+        {
+            porte.GetComponent<MeshRenderer>().material.color = colorOff;
+            porte.gameObject.tag = porteFermeTag;
+        }   
 
         // Initialisation du sol
         solMaterial = sol.GetComponent<MeshRenderer>().material;
 
         // Position initiale de l'agent et de l'interrupteur
-        transform.localPosition = GenerateFloorPosition(0.5f, -2f, 2f, -1f, -2f);
-        interrupteurTransform.localPosition = GenerateFloorPosition(0.2f, -2f, 2f, 0f, 1f);
+        transform.localPosition = GenerateAgentPosition();
+        interrupteurTransform.localPosition = GenerateInterrupteurPosition();
 
         // Position initiale des portes
-        Vector3[] doorPositions = GenerateDoorsPositions(0.9f, 0.5f, 2.65f, 2f);
-        porte1Transform.localPosition = doorPositions[0];
-        porte2Transform.localPosition = doorPositions[1];
-
-        // Initialisation de la couleur des portes
-        porte1Material.color = materialOff;
-        porte2Material.color = materialOff;
+        Vector3[] doorPositions = GenerateDoorsPositions();
+        portes[0].transform.localPosition = doorPositions[0];
+        portes[1].transform.localPosition = doorPositions[1];
     }
 
 
@@ -188,28 +185,31 @@ public class AgentController : Agent
         contActions[1] = Input.GetAxisRaw("Vertical");
     }
 
-    private Vector3 GenerateFloorPosition(float posY, float minX, float maxX, float minZ, float maxZ)
+    private Vector3 GenerateInterrupteurPosition()
     {
-        return new Vector3(Random.Range(minX, maxX), posY, Random.Range(minZ, maxZ));
+        return new Vector3(Random.Range(solMinX, solMaxX), interrupteurPosY, Random.Range(interrupteurminZ, interrupteurmaxZ));
+    }
+
+    private Vector3 GenerateAgentPosition()
+    {
+        return new Vector3(Random.Range(solMinX, solMaxX), agentPosY, Random.Range(agentMinZ, agentMaxZ));
     }
     
-    private Vector3[] GenerateDoorsPositions(float minY, float maxY, float posZ, float minDistance)
+    private Vector3[] GenerateDoorsPositions()
     {
         Vector3[] positions = new Vector3[2];
 
-        // Génération de la position x pour la première position
-        float position1X = Random.Range(-2f, 2f);
+        float position1X = Random.Range(murAvecPorteMinX, murAvecPorteMaxX);
         float position2X;
 
         // Génération de la position x pour la deuxième position sans superposition avec la première
         do
         {
-            position2X = Random.Range(-2f, 2f);
-        } while (Mathf.Abs(position1X - position2X) < minDistance); // Vérification de la distance minimale entre les positions
+            position2X = Random.Range(murAvecPorteMinX, murAvecPorteMaxX);
+        } while (Mathf.Abs(position1X - position2X) < 1.2f); 
 
-        // Assignation des positions y et z pour les deux positions
-        positions[0] = new Vector3(position1X, minY, posZ);
-        positions[1] = new Vector3(position2X, maxY, posZ);
+        positions[0] = new Vector3(position1X, grandePortePosY, murAvecPortePosZ);
+        positions[1] = new Vector3(position2X, petitePortePosY, murAvecPortePosZ);
 
         return positions;
     }
