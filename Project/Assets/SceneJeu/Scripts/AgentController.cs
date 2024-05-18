@@ -1,43 +1,39 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Xsl;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
 public class AgentController : Agent
 {
-    
+
     [SerializeField] private GameObject sol;
-    [SerializeField] private Material solMaterial;
+    private Material solMaterial;
 
     [SerializeField] private GameObject interrupteur;
-    [SerializeField] private Transform interrupteurTransform;
-    [SerializeField] private Material interrupteurMaterial;
-    [SerializeField] private bool interrupteurAtteint;
+    private Transform interrupteurTransform;
+    private Material interrupteurMaterial;
+    private bool interrupteurAtteint;
 
     [SerializeField] private List<GameObject> portes;
 
-    [SerializeField] private Transform porte1Transform;
-    [SerializeField] private Material porte1Material;
-    [SerializeField] private bool porte1Ouverte = false;
+    private Transform porte1Transform;
+    private Material porte1Material;
+    private bool porte1Ouverte = false;
 
-    [SerializeField] private Transform porte2Transform;
-    [SerializeField] private Material porte2Material;
-    [SerializeField] private bool porte2Ouverte = false;
+    private Transform porte2Transform;
+    private Material porte2Material;
+    private bool porte2Ouverte = false;
 
-    [SerializeField] private GameObject porteToReach;
-    [SerializeField] private Transform porteToReachTransform;
-    [SerializeField] private Material porteToReachMat;
-    [SerializeField] private int indexPorteToReach;
+    private GameObject porteToReach;
+    private Transform porteToReachTransform;
+    private Material porteToReachMat;
+    private int indexPorteToReach;
 
-    [SerializeField] private Color materialOn = Color.yellow;
-    [SerializeField] private Color materialOff = Color.black;
-    [SerializeField] private Color materialGameOver = Color.red;
-    [SerializeField] private Color materialGameSuccess = Color.green;
+    private Color materialOn = Color.yellow;
+    private Color materialOff = Color.black;
+    private Color materialGameOver = Color.red;
+    private Color materialGameSuccess = Color.green;
 
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -52,16 +48,17 @@ public class AgentController : Agent
     {
         sensor.AddObservation(transform.localPosition);
 
-        sensor.AddObservation(porte1Ouverte ? 1: 0);
+        sensor.AddObservation(porte1Ouverte ? 1 : 0);
         sensor.AddObservation(porte2Ouverte ? 1 : 0);
 
         if (!interrupteurAtteint)
         {
             sensor.AddObservation(interrupteurTransform.localPosition);
-        } else
+        }
+        else
         {
             sensor.AddObservation(porteToReachTransform.localPosition);
-        }        
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -96,16 +93,17 @@ public class AgentController : Agent
         if (collider == "Mur")
         {
             AddReward(-100000f);
-        } else if(collider == "MurPorte")
+        }
+        else if (collider == "MurPorte")
         {
             AddReward(-10000f);
             solMaterial.color = Color.blue;
         }
-            else if(collider == "PorteFerme")
+        else if (collider == "PorteFerme")
         {
             AddReward(-100f);
             solMaterial.color = Color.magenta;
-        } 
+        }
 
         EndEpisode();
     }
@@ -127,8 +125,8 @@ public class AgentController : Agent
             porteToReach = portes[indexPorteToReach];
             porteToReachMat = porteToReach.GetComponent<MeshRenderer>().material;
             porteToReachTransform = porteToReach.transform;
-        } 
-        
+        }
+
         interrupteurAtteint = !interrupteurAtteint;
         interrupteurMaterial.color = interrupteurAtteint ? materialOn : materialOff;
         porteToReachMat.color = interrupteurAtteint ? materialOff : materialOn;
@@ -170,17 +168,17 @@ public class AgentController : Agent
         solMaterial = sol.GetComponent<MeshRenderer>().material;
 
         // Position initiale de l'agent et de l'interrupteur
-        Vector3[] agentAndSwitchPositions = GeneratePositions(0.56f, 0.2f, -3.5f, 1.5f, 2f);
+        Vector3[] agentAndSwitchPositions = GeneratePositions(0.2f, 0.5f, -2f, 1f, 2f);
         //transform.localPosition = agentAndSwitchPositions[0];
         //interrupteurTransform.localPosition = agentAndSwitchPositions[1];
-        transform.localPosition = new Vector3(-1.5f, 0.56f, -0.45f);
-        interrupteurTransform.localPosition = new Vector3(-0.2f, 0.2f, 1.2f);
+        transform.localPosition = new Vector3(-1f, 0.5f, -2f);
+        interrupteurTransform.localPosition = new Vector3(0f, 0.2f, 0f);
 
         // Couleur initiales de l'interrupteur
         interrupteurMaterial.color = materialOn;
 
         // Position initiale des portes
-        Vector3[] doorPositions = GeneratePositions(1f, 0.5f, 4.10f, 4.10f, 2f);
+        Vector3[] doorPositions = GeneratePositions(0.9f, 0.5f, 2.65f, 2.65f, 2f);
         porte1Transform.localPosition = doorPositions[0];
         porte2Transform.localPosition = doorPositions[1];
         //porte1Transform.localPosition = new Vector3(-1.5f, 1f, 4.1f);
