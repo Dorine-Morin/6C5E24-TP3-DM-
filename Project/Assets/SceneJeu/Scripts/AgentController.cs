@@ -169,7 +169,7 @@ public class AgentController : Agent
         solMaterial = sol.GetComponent<MeshRenderer>().material;
 
         // Position initiale de l'agent et de l'interrupteur
-        Vector3[] agentAndSwitchPositions = GeneratePositions(0.2f, 0.5f, -2f, 1f, 2f);
+        Vector3[] agentAndSwitchPositions = GeneratePositions(0.2f, 0.5f, -1.85f, 0.6f, 1f);
         //transform.localPosition = agentAndSwitchPositions[0];
         //interrupteurTransform.localPosition = agentAndSwitchPositions[1];
         transform.localPosition = new Vector3(-1f, 0.5f, -2f);
