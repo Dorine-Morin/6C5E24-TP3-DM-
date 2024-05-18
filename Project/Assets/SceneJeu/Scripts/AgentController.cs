@@ -13,7 +13,7 @@ public class AgentController : Agent
     [SerializeField] private GameObject interrupteur;
     private Transform interrupteurTransform;
     private Material interrupteurMaterial;
-    private bool interrupteurAtteint;
+    private bool interrupteurActivated;
 
     [SerializeField] private List<GameObject> portes;
 
@@ -29,6 +29,8 @@ public class AgentController : Agent
     private Transform porteToReachTransform;
     private Material porteToReachMat;
     private int indexPorteToReach;
+
+    private Transform goalTransform;
 
     private Color materialOn = Color.yellow;
     private Color materialOff = Color.black;
@@ -47,30 +49,18 @@ public class AgentController : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.localPosition);
-
-        sensor.AddObservation(porte1Ouverte ? 1 : 0);
-        sensor.AddObservation(porte2Ouverte ? 1 : 0);
-
-        if (!interrupteurAtteint)
-        {
-            sensor.AddObservation(interrupteurTransform.localPosition);
-        }
-        else
-        {
-            sensor.AddObservation(porteToReachTransform.localPosition);
-        }
+        sensor.AddObservation(porteToReachTransform.localPosition);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("enter trigger");
         if ((other.CompareTag("Porte1") && porte1Ouverte) || (other.CompareTag("Porte2") && porte2Ouverte))
         {
             GameSuccess();
         }
         else if ((other.CompareTag("Porte1") && !porte1Ouverte) || (other.CompareTag("Porte2") && !porte2Ouverte))
         {
-            GameOver("PorteFerme");
+            GameOver("PorteFerme");   
         }
         else if (other.CompareTag("Bouton"))
         {
@@ -93,16 +83,16 @@ public class AgentController : Agent
 
         if (collider == "Mur")
         {
-            AddReward(-100000f);
+            SetReward(-10000f);
         }
         else if (collider == "MurPorte")
         {
-            AddReward(-10000f);
+            SetReward(-1000f);
             solMaterial.color = Color.blue;
         }
         else if (collider == "PorteFerme")
         {
-            AddReward(-100f);
+            SetReward(-100f);
             solMaterial.color = Color.magenta;
         }
 
@@ -119,18 +109,27 @@ public class AgentController : Agent
 
     private void BoutonReached()
     {
-        if (interrupteurAtteint)
+        if (!interrupteurActivated)
         {
             SetReward(1000f);
             indexPorteToReach = Random.Range(0, portes.Count);
             porteToReach = portes[indexPorteToReach];
             porteToReachMat = porteToReach.GetComponent<MeshRenderer>().material;
             porteToReachTransform = porteToReach.transform;
+
+            goalTransform = porteToReachTransform;
+
+        } else
+        {
+            goalTransform = interrupteurTransform;
         }
 
-        interrupteurAtteint = !interrupteurAtteint;
-        interrupteurMaterial.color = interrupteurAtteint ? materialOn : materialOff;
-        porteToReachMat.color = interrupteurAtteint ? materialOff : materialOn;
+        
+
+        interrupteurActivated = !interrupteurActivated;
+        interrupteurMaterial.color = interrupteurActivated ? materialOff : materialOn;
+        porteToReachMat.color = interrupteurActivated ? materialOn : materialOff;
+        
 
         if (indexPorteToReach == 0)
         {
@@ -149,7 +148,8 @@ public class AgentController : Agent
         interrupteurMaterial = interrupteur.GetComponent<MeshRenderer>().material;
         interrupteurTransform = interrupteur.transform;
         interrupteurMaterial.color = materialOn;
-        interrupteurAtteint = true;
+        interrupteurActivated = false;
+        goalTransform = interrupteurTransform;
 
         // Initialisation des portes
         porte1Material = portes[0].GetComponent<MeshRenderer>().material;
@@ -170,10 +170,10 @@ public class AgentController : Agent
 
         // Position initiale de l'agent et de l'interrupteur
         Vector3[] agentAndSwitchPositions = GeneratePositions(0.2f, 0.5f, -1.85f, 0.6f, 1f);
-        //transform.localPosition = agentAndSwitchPositions[0];
-        //interrupteurTransform.localPosition = agentAndSwitchPositions[1];
-        transform.localPosition = new Vector3(-1f, 0.5f, -2f);
-        interrupteurTransform.localPosition = new Vector3(0f, 0.2f, 0f);
+        transform.localPosition = agentAndSwitchPositions[1];
+        interrupteurTransform.localPosition = agentAndSwitchPositions[0];
+        //transform.localPosition = new Vector3(-1f, 0.5f, -2f);
+        //interrupteurTransform.localPosition = new Vector3(0f, 0.2f, 0f);
 
         // Couleur initiales de l'interrupteur
         interrupteurMaterial.color = materialOn;

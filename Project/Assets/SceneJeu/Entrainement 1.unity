@@ -479,6 +479,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1367321503
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1367321504}
+  m_Layer: 0
+  m_Name: Training
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1367321504
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367321503}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.244705, y: 5.2754717, z: 3.297796}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1635929538
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,29 +703,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1860342555867352433, guid: d9efd49727e4bcf4aaa03b0a12b7fd9a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.85
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860342555867352433, guid: d9efd49727e4bcf4aaa03b0a12b7fd9a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860342555867352433, guid: d9efd49727e4bcf4aaa03b0a12b7fd9a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1.85
-      objectReference: {fileID: 0}
     - target: {fileID: 6385014592092052341, guid: d9efd49727e4bcf4aaa03b0a12b7fd9a, type: 3}
       propertyPath: m_Name
       value: Platforme
-      objectReference: {fileID: 0}
-    - target: {fileID: 6736119320957453197, guid: d9efd49727e4bcf4aaa03b0a12b7fd9a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6736119320957453197, guid: d9efd49727e4bcf4aaa03b0a12b7fd9a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -710,3 +721,4 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 1075582479}
   - {fileID: 1723353361}
+  - {fileID: 1367321504}
