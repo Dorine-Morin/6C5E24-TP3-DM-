@@ -63,6 +63,7 @@ public class AgentController : Agent
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("enter trigger");
         if ((other.CompareTag("Porte1") && porte1Ouverte) || (other.CompareTag("Porte2") && porte2Ouverte))
         {
             GameSuccess();
