@@ -13,7 +13,7 @@ public class AgentController : Agent
     [SerializeField] private GameObject interrupteur;
     private Transform interrupteurTransform;
     private Material interrupteurMaterial;
-    private bool interrupteurActivated;
+    private bool interrupteurOff;
 
     [SerializeField] private List<GameObject> portes;
 
@@ -83,16 +83,16 @@ public class AgentController : Agent
 
         if (collider == "Mur")
         {
-            SetReward(-10000f);
+            AddReward(-1000f);
         }
         else if (collider == "MurPorte")
         {
-            SetReward(-1000f);
+            AddReward(-1000f);
             solMaterial.color = Color.blue;
         }
         else if (collider == "PorteFerme")
         {
-            SetReward(-100f);
+            AddReward(-100f);
             solMaterial.color = Color.magenta;
         }
 
@@ -103,15 +103,15 @@ public class AgentController : Agent
     {
         solMaterial.color = materialGameSuccess;
 
-        SetReward(100000f);
+        AddReward(100000f);
         EndEpisode();
     }
 
     private void BoutonReached()
     {
-        if (!interrupteurActivated)
+        if (!interrupteurOff)
         {
-            SetReward(1000f);
+            AddReward(1000f);
             indexPorteToReach = Random.Range(0, portes.Count);
             porteToReach = portes[indexPorteToReach];
             porteToReachMat = porteToReach.GetComponent<MeshRenderer>().material;
@@ -124,11 +124,9 @@ public class AgentController : Agent
             goalTransform = interrupteurTransform;
         }
 
-        
-
-        interrupteurActivated = !interrupteurActivated;
-        interrupteurMaterial.color = interrupteurActivated ? materialOff : materialOn;
-        porteToReachMat.color = interrupteurActivated ? materialOn : materialOff;
+        interrupteurOff = !interrupteurOff;
+        interrupteurMaterial.color = interrupteurOff ? materialOff : materialOn;
+        porteToReachMat.color = interrupteurOff ? materialOn : materialOff;
         
 
         if (indexPorteToReach == 0)
@@ -148,7 +146,7 @@ public class AgentController : Agent
         interrupteurMaterial = interrupteur.GetComponent<MeshRenderer>().material;
         interrupteurTransform = interrupteur.transform;
         interrupteurMaterial.color = materialOn;
-        interrupteurActivated = false;
+        interrupteurOff = false;
         goalTransform = interrupteurTransform;
 
         // Initialisation des portes
@@ -169,21 +167,13 @@ public class AgentController : Agent
         solMaterial = sol.GetComponent<MeshRenderer>().material;
 
         // Position initiale de l'agent et de l'interrupteur
-        Vector3[] agentAndSwitchPositions = GeneratePositions(0.2f, 0.5f, -1.85f, 0.6f, 1f);
-        transform.localPosition = agentAndSwitchPositions[1];
-        interrupteurTransform.localPosition = agentAndSwitchPositions[0];
-        //transform.localPosition = new Vector3(-1f, 0.5f, -2f);
-        //interrupteurTransform.localPosition = new Vector3(0f, 0.2f, 0f);
-
-        // Couleur initiales de l'interrupteur
-        interrupteurMaterial.color = materialOn;
+        transform.localPosition = GenerateFloorPosition(0.5f, -2f, 2f, -1f, -2f);
+        interrupteurTransform.localPosition = GenerateFloorPosition(0.2f, -2f, 2f, 0f, 1f);
 
         // Position initiale des portes
-        Vector3[] doorPositions = GeneratePositions(0.9f, 0.5f, 2.65f, 2.65f, 2f);
+        Vector3[] doorPositions = GenerateDoorsPositions(0.9f, 0.5f, 2.65f, 2f);
         porte1Transform.localPosition = doorPositions[0];
         porte2Transform.localPosition = doorPositions[1];
-        //porte1Transform.localPosition = new Vector3(-1.5f, 1f, 4.1f);
-        //porte2Transform.localPosition = new Vector3(1.75f, 0.5f, 4.1f);
 
         // Initialisation de la couleur des portes
         porte1Material.color = materialOff;
@@ -198,7 +188,12 @@ public class AgentController : Agent
         contActions[1] = Input.GetAxisRaw("Vertical");
     }
 
-    private Vector3[] GeneratePositions(float minY, float maxY, float minZ, float maxZ, float minDistance)
+    private Vector3 GenerateFloorPosition(float posY, float minX, float maxX, float minZ, float maxZ)
+    {
+        return new Vector3(Random.Range(minX, maxX), posY, Random.Range(minZ, maxZ));
+    }
+    
+    private Vector3[] GenerateDoorsPositions(float minY, float maxY, float posZ, float minDistance)
     {
         Vector3[] positions = new Vector3[2];
 
@@ -212,21 +207,9 @@ public class AgentController : Agent
             position2X = Random.Range(-2f, 2f);
         } while (Mathf.Abs(position1X - position2X) < minDistance); // Vérification de la distance minimale entre les positions
 
-        float position1Z = minZ;
-        float position2Z = maxZ;
-
-        if (position1Z != position2Z)
-        {
-            position1Z = Random.Range(minZ, maxZ);
-            do
-            {
-                position2Z = Random.Range(minZ, maxZ);
-            } while (Mathf.Abs(position1Z - position2Z) < minDistance);
-        }
-
         // Assignation des positions y et z pour les deux positions
-        positions[0] = new Vector3(position1X, minY, position1Z);
-        positions[1] = new Vector3(position2X, maxY, position2Z);
+        positions[0] = new Vector3(position1X, minY, posZ);
+        positions[1] = new Vector3(position2X, maxY, posZ);
 
         return positions;
     }
