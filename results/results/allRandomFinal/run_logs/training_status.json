@@ -2,22 +2,31 @@
     "MoveToDoor": {
         "checkpoints": [
             {
-                "steps": 250093,
-                "file_path": "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-250093.onnx",
-                "reward": 100528.03738317757,
-                "creation_time": 1716047516.1120613,
+                "steps": 499996,
+                "file_path": "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-499996.onnx",
+                "reward": 99800.58055152395,
+                "creation_time": 1716393219.7896645,
                 "auxillary_file_paths": [
-                    "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-250093.pt"
+                    "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-499996.pt"
+                ]
+            },
+            {
+                "steps": 500003,
+                "file_path": "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-500003.onnx",
+                "reward": 99800.86956521739,
+                "creation_time": 1716393219.8384218,
+                "auxillary_file_paths": [
+                    "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-500003.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 250093,
+            "steps": 500003,
             "file_path": "results\\allRandomFinal\\MoveToDoor.onnx",
-            "reward": 100528.03738317757,
-            "creation_time": 1716047516.1120613,
+            "reward": 99800.86956521739,
+            "creation_time": 1716393219.8384218,
             "auxillary_file_paths": [
-                "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-250093.pt"
+                "results\\allRandomFinal\\MoveToDoor\\MoveToDoor-500003.pt"
             ]
         }
     },
