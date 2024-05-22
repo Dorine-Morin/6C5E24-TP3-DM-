@@ -16,18 +16,18 @@ public class AgentController : Agent
 
     [SerializeField] private List<GameObject> portes;
    
-    private GameObject porteToReach;
-    private Material porteToReachMat;
-    private int indexPorteToReach;
+    private GameObject porteOuverte;
+    private Material porteOuverteMaterial;
+    private int indexPorteOuverte;
 
-    private Transform goalTransform;
+    private Transform butTransform;
 
-    private Color colorOn = Color.yellow;
-    private Color colorOff = Color.black;
-    private Color colorMurSansPortes = Color.red;
-    private Color colorMurAvecPortes = Color.blue;
-    private Color colorPorteFerme = Color.magenta;
-    private Color colorPorteOuverte = Color.green;
+    private Color couleurOn = Color.yellow;
+    private Color couleurOff = Color.black;
+    private Color couleurMurSansPortes = Color.red;
+    private Color couleurMurAvecPortes = Color.blue;
+    private Color couleurPorteFerme = Color.magenta;
+    private Color couleurPorteOuverte = Color.green;
 
     private string porteOuverteTag = "PorteOuverte";
     private string porteFermeTag = "PorteFerme";
@@ -60,7 +60,7 @@ public class AgentController : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.localPosition);
-        sensor.AddObservation(goalTransform.localPosition);
+        sensor.AddObservation(butTransform.localPosition);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -75,7 +75,7 @@ public class AgentController : Agent
         }
         else if (other.CompareTag(interrupteurTag))
         {
-            BoutonReached();
+            BoutonAtteint();
         }
         else if (other.CompareTag(murSansPortesTag))
         {
@@ -92,17 +92,17 @@ public class AgentController : Agent
         if (collider == murSansPortesTag)
         {
             AddReward(-1000f);
-            solMaterial.color = colorMurSansPortes;
+            solMaterial.color = couleurMurSansPortes;
         }
         else if (collider == murAvecPortesTag)
         {
             AddReward(-1000f);
-            solMaterial.color = colorMurAvecPortes;
+            solMaterial.color = couleurMurAvecPortes;
         }
         else if (collider == porteFermeTag)
         {
             AddReward(-100f);
-            solMaterial.color = colorPorteFerme;
+            solMaterial.color = couleurPorteFerme;
         }
 
         EndEpisode();
@@ -110,39 +110,39 @@ public class AgentController : Agent
 
     private void GameSuccess()
     {
-        solMaterial.color = colorPorteOuverte;
+        solMaterial.color = couleurPorteOuverte;
 
         AddReward(100000f);
         EndEpisode();
     }
 
-    private void BoutonReached()
+    private void BoutonAtteint()
     {
         if (interrupteurOff)
         {  
             AddReward(1000f);
-            interrupteurMaterial.color = colorOff;
-            SetPorteToReach();
-            goalTransform = porteToReach.transform;
+            interrupteurMaterial.color = couleurOff;
+            SetPorteOuverte();
+            butTransform = porteOuverte.transform;
 
         } else
         {
-            interrupteurMaterial.color = colorOn;
-            porteToReach.gameObject.tag = porteFermeTag;
-            porteToReachMat.color = colorOff;
-            goalTransform = interrupteurTransform;
+            interrupteurMaterial.color = couleurOn;
+            porteOuverte.gameObject.tag = porteFermeTag;
+            porteOuverteMaterial.color = couleurOff;
+            butTransform = interrupteurTransform;
         }
 
         interrupteurOff = !interrupteurOff;
     }
 
-    private void SetPorteToReach()
+    private void SetPorteOuverte()
     {
-        indexPorteToReach = Random.Range(0, portes.Count);
-        porteToReach = portes[indexPorteToReach];
-        porteToReachMat = porteToReach.GetComponent<MeshRenderer>().material;
-        porteToReach.gameObject.tag = porteOuverteTag;
-        porteToReachMat.color = colorOn;
+        indexPorteOuverte = Random.Range(0, portes.Count);
+        porteOuverte = portes[indexPorteOuverte];
+        porteOuverteMaterial = porteOuverte.GetComponent<MeshRenderer>().material;
+        porteOuverte.gameObject.tag = porteOuverteTag;
+        porteOuverteMaterial.color = couleurOn;
     }
 
     public override void OnEpisodeBegin()
@@ -150,14 +150,14 @@ public class AgentController : Agent
         // Initialisation de l'interrupteur
         interrupteurMaterial = interrupteur.GetComponent<MeshRenderer>().material;
         interrupteurTransform = interrupteur.transform;
-        interrupteurMaterial.color = colorOn;
+        interrupteurMaterial.color = couleurOn;
         interrupteurOff = true;
-        goalTransform = interrupteurTransform;
+        butTransform = interrupteurTransform;
 
         // Initialisation des portes
         foreach (var porte in portes)
         {
-            porte.GetComponent<MeshRenderer>().material.color = colorOff;
+            porte.GetComponent<MeshRenderer>().material.color = couleurOff;
             porte.gameObject.tag = porteFermeTag;
         }   
 
